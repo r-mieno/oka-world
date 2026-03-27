@@ -51,8 +51,28 @@ export default function Home() {
     }
   }, [status, index]);
 
-  if (status === "idle" || status === "done") {
+  const [showReplay, setShowReplay] = useState(false);
+
+  function handleReplay() {
+    setShowReplay(false);
+    setIndex(0);
+    setStatus("fadein");
+  }
+
+  if (status === "idle") {
     return <div className={styles.stage} />;
+  }
+
+  if (status === "done") {
+    return (
+      <div className={styles.stage} onClick={() => setShowReplay(true)}>
+        {showReplay && (
+          <button className={styles.replay} onClick={(e) => { e.stopPropagation(); handleReplay(); }}>
+            もう一度
+          </button>
+        )}
+      </div>
+    );
   }
 
   const current = scenes[index];
