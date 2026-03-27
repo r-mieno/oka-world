@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ja {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 2.2;
+  color: #1a1a1a;
+}
+
+.en {
+  font-family: var(--font-noto-serif), serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 2.2;
+  color: #1a1a1a;
+}
