@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { halScenes } from "@/data/halScenes";
 import styles from "./page.module.css";
 
-const CHAR_DELAY = 32;   // ms/文字
+const CHAR_DELAY = 55;   // ms/文字
 const START_DELAY = 900; // シーン開始前の間（ms）
 const OKA_DELAY = 1500;  // HAL表示完了後に岡潔をフェードインするまでの待機（ms）
 

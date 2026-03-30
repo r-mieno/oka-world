@@ -142,7 +142,7 @@
   line-height: 1.8;
   color: #1a1a1a;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1.6s ease;
   min-height: 3em;
 }
 
