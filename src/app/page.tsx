@@ -1,87 +1,108 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Scene from "@/components/Scene";
-import { scenes, FADE_DURATION } from "@/data/scenes";
+import { useEffect, useRef, useState } from "react";
+import { halScenes } from "@/data/halScenes";
 import styles from "./page.module.css";
 
-type Status = "idle" | "fadein" | "visible" | "fadeout" | "done";
+const CHAR_DELAY = 32; // ms/文字
+const OKA_DELAY = 500; // HAL表示完了後に岡潔をフェードインするまでの待機
 
-export default function Home() {
-  const [index, setIndex] = useState(0);
-  const [status, setStatus] = useState<Status>("idle");
+export default function HalVsOka() {
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [okaVisible, setOkaVisible] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scene = halScenes[sceneIndex];
+  const halText = scene.hal;
+  const isTypingDone = charIndex >= halText.length;
 
   useEffect(() => {
-    // フォントが読み込まれてから開始する
-    document.fonts.ready.then(() => {
-      setStatus("fadein");
-    });
-  }, []);
-
-  useEffect(() => {
-    if (status === "idle" || status === "done") return;
-
-    const current = scenes[index];
-
-    if (status === "fadein") {
-      // フェードイン開始直後にvisibleへ（CSSのtransitionが2sかけて opacity:1 にする）
-      const t = setTimeout(() => setStatus("visible"), 0);
-      return () => clearTimeout(t);
+    if (charIndex < halText.length) {
+      timerRef.current = setTimeout(() => {
+        setCharIndex((c) => c + 1);
+      }, CHAR_DELAY);
+    } else {
+      timerRef.current = setTimeout(() => {
+        setOkaVisible(true);
+      }, OKA_DELAY);
     }
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [charIndex, halText]);
 
-    if (status === "visible") {
-      // 静止時間（duration から fade×2 を除いた時間）
-      const stillDuration = current.duration - FADE_DURATION * 2;
-      const t = setTimeout(() => setStatus("fadeout"), stillDuration);
-      return () => clearTimeout(t);
-    }
-
-    if (status === "fadeout") {
-      // フェードアウト完了を待って次へ
-      const t = setTimeout(() => {
-        const next = index + 1;
-        if (next >= scenes.length) {
-          setStatus("done");
-        } else {
-          setIndex(next);
-          setStatus("fadein");
-        }
-      }, FADE_DURATION);
-      return () => clearTimeout(t);
-    }
-  }, [status, index]);
-
-  const [showReplay, setShowReplay] = useState(false);
-
-  function handleReplay() {
-    setShowReplay(false);
-    setIndex(0);
-    setStatus("fadein");
+  function goToScene(index: number) {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setSceneIndex(index);
+    setCharIndex(0);
+    setOkaVisible(false);
   }
 
-  if (status === "idle") {
-    return <div className={styles.stage} />;
-  }
-
-  if (status === "done") {
-    return (
-      <div className={styles.stage} onClick={() => setShowReplay(true)}>
-        {showReplay && (
-          <button className={styles.replay} onClick={(e) => { e.stopPropagation(); handleReplay(); }}>
-            もう一度
-          </button>
-        )}
-      </div>
-    );
-  }
-
-  const current = scenes[index];
-  const isVisible = status === "visible";
+  const isFirst = sceneIndex === 0;
+  const isLast = sceneIndex === halScenes.length - 1;
 
   return (
-    <div className={styles.stage}>
-      <div className={`${styles.scene}${isVisible ? ` ${styles.visible}` : ""}`}>
-        <Scene ja={current.ja} en={current.en} />
+    <div className={styles.page}>
+      {/* Memory Bar */}
+      <div className={styles.memoryBarWrapper}>
+        <span className={styles.memoryLabel}>HAL 9000 — memory remaining</span>
+        <div className={styles.memoryTrack}>
+          <div
+            className={styles.memoryFill}
+            style={{ width: `${scene.memory}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Cards */}
+      <div className={styles.cards}>
+        {/* HAL 9000 */}
+        <div className={styles.halCard}>
+          <div className={styles.halEye}>
+            <div className={styles.halPupil} />
+          </div>
+          <p className={styles.halText}>
+            {halText.slice(0, charIndex)}
+            {!isTypingDone && <span className={styles.cursor}>▌</span>}
+          </p>
+        </div>
+
+        {/* 岡潔 */}
+        <div className={styles.okaCard}>
+          <div className={styles.okaKanji}>潔</div>
+          <p className={`${styles.okaText}${okaVisible ? ` ${styles.okaVisible}` : ""}`}>
+            {scene.oka}
+          </p>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className={styles.nav}>
+        <button
+          className={styles.navBtn}
+          onClick={() => goToScene(sceneIndex - 1)}
+          disabled={isFirst}
+        >
+          ← 前へ
+        </button>
+
+        <div className={styles.dots}>
+          {halScenes.map((_, i) => (
+            <span
+              key={i}
+              className={`${styles.dot}${i === sceneIndex ? ` ${styles.dotActive}` : ""}`}
+            />
+          ))}
+        </div>
+
+        <button
+          className={isLast ? styles.navBtnHidden : styles.navBtn}
+          onClick={() => goToScene(sceneIndex + 1)}
+          tabIndex={isLast ? -1 : 0}
+        >
+          次へ →
+        </button>
       </div>
     </div>
   );
