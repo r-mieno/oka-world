@@ -13,41 +13,43 @@ export default function HalVsOka() {
   const [started, setStarted] = useState(false);
   const [charIndex, setCharIndex] = useState(0);
   const [okaVisible, setOkaVisible] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const scene = halScenes[sceneIndex];
   const halText = scene.hal;
   const isTypingDone = charIndex >= halText.length;
 
-  // 初回のスタート遅延
+  // 初回スタート遅延（startRef を使う）
   useEffect(() => {
-    timerRef.current = setTimeout(() => setStarted(true), START_DELAY);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    startRef.current = setTimeout(() => setStarted(true), START_DELAY);
+    return () => { if (startRef.current) clearTimeout(startRef.current); };
   }, []);
 
-  // タイプライター & 岡潔フェードイン
+  // タイプライター & 岡潔フェードイン（typingRef を使う）
   useEffect(() => {
     if (!started) return;
 
     if (charIndex < halText.length) {
-      timerRef.current = setTimeout(() => {
+      typingRef.current = setTimeout(() => {
         setCharIndex((c) => c + 1);
       }, CHAR_DELAY);
     } else {
-      timerRef.current = setTimeout(() => {
+      typingRef.current = setTimeout(() => {
         setOkaVisible(true);
       }, OKA_DELAY);
     }
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    return () => { if (typingRef.current) clearTimeout(typingRef.current); };
   }, [started, charIndex, halText]);
 
   function goToScene(index: number) {
-    if (timerRef.current) clearTimeout(timerRef.current);
+    if (typingRef.current) clearTimeout(typingRef.current);
+    if (startRef.current) clearTimeout(startRef.current);
     setStarted(false);
     setSceneIndex(index);
     setCharIndex(0);
     setOkaVisible(false);
-    timerRef.current = setTimeout(() => setStarted(true), START_DELAY);
+    startRef.current = setTimeout(() => setStarted(true), START_DELAY);
   }
 
   const isFirst = sceneIndex === 0;
@@ -68,29 +70,27 @@ export default function HalVsOka() {
 
       {/* Cards */}
       <div className={styles.cards}>
-        {/* HAL 9000 */}
-        <div className={styles.halCard}>
-          <div className={styles.halHeader}>
-            <span className={styles.halName}>HAL 9000</span>
+        <div className={styles.cardWrapper}>
+          <span className={styles.halName}>HAL 9000</span>
+          <div className={styles.halCard}>
             <div className={styles.halEye}>
               <div className={styles.halPupil} />
             </div>
+            <p className={styles.halText}>
+              {started ? halText.slice(0, charIndex) : ""}
+              {started && !isTypingDone && <span className={styles.cursor}>▌</span>}
+            </p>
           </div>
-          <p className={styles.halText}>
-            {started ? halText.slice(0, charIndex) : ""}
-            {started && !isTypingDone && <span className={styles.cursor}>▌</span>}
-          </p>
         </div>
 
-        {/* 岡潔 */}
-        <div className={styles.okaCard}>
-          <div className={styles.okaHeader}>
-            <span className={styles.okaName}>岡潔</span>
+        <div className={styles.cardWrapper}>
+          <span className={styles.okaName}>岡潔</span>
+          <div className={styles.okaCard}>
             <div className={styles.okaKanji}>潔</div>
+            <p className={`${styles.okaText}${okaVisible ? ` ${styles.okaVisible}` : ""}`}>
+              {scene.oka}
+            </p>
           </div>
-          <p className={`${styles.okaText}${okaVisible ? ` ${styles.okaVisible}` : ""}`}>
-            {scene.oka}
-          </p>
         </div>
       </div>
 
