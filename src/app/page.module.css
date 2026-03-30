@@ -134,6 +134,9 @@
   color: #1a1a1a;
   opacity: 0.5;
   line-height: 1;
+  min-height: 48px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .okaText {
