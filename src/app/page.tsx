@@ -54,6 +54,7 @@ export default function HalVsOka() {
 
   const isFirst = sceneIndex === 0;
   const isLast = sceneIndex === halScenes.length - 1;
+  const canNavigate = okaVisible;
 
   return (
     <div className={styles.page}>
@@ -99,13 +100,14 @@ export default function HalVsOka() {
         <button
           className={styles.navBtn}
           onClick={() => goToScene(sceneIndex - 1)}
-          disabled={isFirst}
+          disabled={isFirst || !canNavigate}
         >
           ← 前へ
         </button>
         <button
           className={isLast ? styles.navBtnHidden : styles.navBtn}
           onClick={() => goToScene(sceneIndex + 1)}
+          disabled={!canNavigate}
           tabIndex={isLast ? -1 : 0}
         >
           次へ →

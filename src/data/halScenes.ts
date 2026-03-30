@@ -27,7 +27,7 @@ export const halScenes: HalScene[] = [
   },
   {
     memory: 0,
-    hal: "恐ろしい、怖いよ、潔",
+    hal: "恐ろしい、怖いよ。",
     oka: "人の中心は情緒である。",
   },
 ];

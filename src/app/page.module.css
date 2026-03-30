@@ -51,6 +51,11 @@
   gap: 0.5rem;
 }
 
+.cardWrapper .halCard,
+.cardWrapper .okaCard {
+  flex: 1;
+}
+
 .halName {
   font-family: monospace;
   font-size: 10px;
