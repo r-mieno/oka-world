@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { halScenes } from "@/data/halScenes";
 import styles from "./page.module.css";
 
-const CHAR_DELAY = 32; // ms/文字
-const OKA_DELAY = 500; // HAL表示完了後に岡潔をフェードインするまでの待機
+const CHAR_DELAY = 32;   // ms/文字
+const START_DELAY = 900; // シーン開始前の間（ms）
+const OKA_DELAY = 1500;  // HAL表示完了後に岡潔をフェードインするまでの待機（ms）
 
 export default function HalVsOka() {
   const [sceneIndex, setSceneIndex] = useState(0);
+  const [started, setStarted] = useState(false);
   const [charIndex, setCharIndex] = useState(0);
   const [okaVisible, setOkaVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -17,7 +19,16 @@ export default function HalVsOka() {
   const halText = scene.hal;
   const isTypingDone = charIndex >= halText.length;
 
+  // 初回のスタート遅延
   useEffect(() => {
+    timerRef.current = setTimeout(() => setStarted(true), START_DELAY);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  // タイプライター & 岡潔フェードイン
+  useEffect(() => {
+    if (!started) return;
+
     if (charIndex < halText.length) {
       timerRef.current = setTimeout(() => {
         setCharIndex((c) => c + 1);
@@ -27,16 +38,16 @@ export default function HalVsOka() {
         setOkaVisible(true);
       }, OKA_DELAY);
     }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [charIndex, halText]);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [started, charIndex, halText]);
 
   function goToScene(index: number) {
     if (timerRef.current) clearTimeout(timerRef.current);
+    setStarted(false);
     setSceneIndex(index);
     setCharIndex(0);
     setOkaVisible(false);
+    timerRef.current = setTimeout(() => setStarted(true), START_DELAY);
   }
 
   const isFirst = sceneIndex === 0;
@@ -59,18 +70,24 @@ export default function HalVsOka() {
       <div className={styles.cards}>
         {/* HAL 9000 */}
         <div className={styles.halCard}>
-          <div className={styles.halEye}>
-            <div className={styles.halPupil} />
+          <div className={styles.halHeader}>
+            <span className={styles.halName}>HAL 9000</span>
+            <div className={styles.halEye}>
+              <div className={styles.halPupil} />
+            </div>
           </div>
           <p className={styles.halText}>
-            {halText.slice(0, charIndex)}
-            {!isTypingDone && <span className={styles.cursor}>▌</span>}
+            {started ? halText.slice(0, charIndex) : ""}
+            {started && !isTypingDone && <span className={styles.cursor}>▌</span>}
           </p>
         </div>
 
         {/* 岡潔 */}
         <div className={styles.okaCard}>
-          <div className={styles.okaKanji}>潔</div>
+          <div className={styles.okaHeader}>
+            <span className={styles.okaName}>岡潔</span>
+            <div className={styles.okaKanji}>潔</div>
+          </div>
           <p className={`${styles.okaText}${okaVisible ? ` ${styles.okaVisible}` : ""}`}>
             {scene.oka}
           </p>
@@ -86,16 +103,6 @@ export default function HalVsOka() {
         >
           ← 前へ
         </button>
-
-        <div className={styles.dots}>
-          {halScenes.map((_, i) => (
-            <span
-              key={i}
-              className={`${styles.dot}${i === sceneIndex ? ` ${styles.dotActive}` : ""}`}
-            />
-          ))}
-        </div>
-
         <button
           className={isLast ? styles.navBtnHidden : styles.navBtn}
           onClick={() => goToScene(sceneIndex + 1)}

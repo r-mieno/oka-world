@@ -55,6 +55,19 @@
   gap: 1.25rem;
 }
 
+.halHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.halName {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #663322;
+}
+
 .halEye {
   width: 48px;
   height: 48px;
@@ -75,7 +88,7 @@
 
 .halText {
   font-family: monospace;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.8;
   color: #cc6655;
   min-height: 3em;
@@ -101,6 +114,19 @@
   gap: 1.25rem;
 }
 
+.okaHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.okaName {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+
 .okaKanji {
   font-family: var(--font-noto-serif-jp), serif;
   font-size: 2rem;
@@ -112,7 +138,7 @@
 
 .okaText {
   font-family: var(--font-noto-serif-jp), serif;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.8;
   color: #1a1a1a;
   opacity: 0;
@@ -157,22 +183,4 @@
 .navBtnHidden {
   visibility: hidden;
   min-width: 64px;
-}
-
-.dots {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #ccc;
-  transition: background-color 0.4s ease;
-}
-
-.dot.dotActive {
-  background-color: #cc2200;
 }
