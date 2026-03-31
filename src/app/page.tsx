@@ -85,7 +85,7 @@ export default function HalVsOka() {
         </div>
 
         <div className={styles.cardWrapper}>
-          <span className={styles.okaName}>岡潔</span>
+          <span className={styles.okaName}>岡 潔</span>
           <div className={styles.okaCard}>
             <div className={styles.okaKanji}>潔</div>
             <p key={sceneIndex} className={`${styles.okaText}${okaVisible ? ` ${styles.okaVisible}` : ""}`}>

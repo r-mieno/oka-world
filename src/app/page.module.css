@@ -15,7 +15,7 @@
 }
 
 .memoryLabel {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   color: #aaa;
   font-family: monospace;
@@ -58,22 +58,22 @@
 
 .halName {
   font-family: monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   color: #888;
   line-height: 1;
-  height: 14px;
+  height: 16px;
   display: flex;
   align-items: center;
 }
 
 .okaName {
   font-family: var(--font-noto-serif-jp), serif;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   color: #888;
   line-height: 1;
-  height: 14px;
+  height: 16px;
   display: flex;
   align-items: center;
 }
