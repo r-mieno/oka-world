@@ -97,21 +97,33 @@ export default function HalVsOka() {
 
       {/* Navigation */}
       <div className={styles.nav}>
-        <button
-          className={styles.navBtn}
-          onClick={() => goToScene(sceneIndex - 1)}
-          disabled={isFirst || !canNavigate}
-        >
-          ← 前へ
-        </button>
-        <button
-          className={isLast ? styles.navBtnHidden : styles.navBtn}
-          onClick={() => goToScene(sceneIndex + 1)}
-          disabled={!canNavigate}
-          tabIndex={isLast ? -1 : 0}
-        >
-          次へ →
-        </button>
+        {isLast && canNavigate ? (
+          <span className={styles.navBtnHidden} />
+        ) : (
+          <button
+            className={styles.navBtn}
+            onClick={() => goToScene(sceneIndex - 1)}
+            disabled={isFirst || !canNavigate}
+          >
+            ← 前へ
+          </button>
+        )}
+        {isLast ? (
+          <button
+            className={canNavigate ? styles.navBtn : styles.navBtnHidden}
+            onClick={() => goToScene(0)}
+          >
+            最初に戻る
+          </button>
+        ) : (
+          <button
+            className={styles.navBtn}
+            onClick={() => goToScene(sceneIndex + 1)}
+            disabled={!canNavigate}
+          >
+            次へ →
+          </button>
+        )}
       </div>
     </div>
   );

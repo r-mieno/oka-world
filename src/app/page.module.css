@@ -61,6 +61,10 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   color: #888;
+  line-height: 1;
+  height: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .okaName {
@@ -68,6 +72,10 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   color: #888;
+  line-height: 1;
+  height: 14px;
+  display: flex;
+  align-items: center;
 }
 
 /* HAL Card */
